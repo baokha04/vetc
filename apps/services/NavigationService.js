@@ -1,12 +1,10 @@
 ﻿(function () {
-    angular.module('publicisApp.services.navigationService', [])
-	.factory('navigationService', ['$http', '$q', '$filter', 'appContext', 'appSetting',
-        function ($http, $q, $filter, appContext, appSetting) {            
+    angular.module('vetc.services.navigationService', [])
+	.factory('navigationService', ['$http', '$q', '$filter', 'appCommon',
+        function ($http, $q, $filter, appCommon, appSetting) {
             // constructor
             var navigationService = function () {
-            };
-
-            // methods                       
+            };            
 
             /*
             * Get taxonomy terms by CSOM
@@ -67,25 +65,7 @@
                                     if (appContext.currentUICultureName != 'en-us') {
                                         url = url.replace('en-us', appContext.currentUICultureName);
                                     }
-                                };
-
-                                // get IsNewTab
-                                var isNewTab = currentTerm.get_customProperties()['IsNewTab'];
-                                if (!isNewTab || isNewTab == undefined || isNewTab == '') {
-                                    isNewTab = false;
-                                } else if (angular.uppercase(isNewTab) == angular.uppercase('True')) {
-                                    isNewTab = true;
-                                } else {
-                                    isNewTab = false;
-                                };
-
-                                // get Permissions
-                                var permission = currentTerm.get_customProperties()['Permission'];
-                                if (permission != undefined) {
-                                    permission = permission.split(',');
-                                } else {
-                                    permission = [];
-                                };
+                                };                                
 
                                 // get GlobalNavigationTaxonomyProvider || CurrentNavigationTaxonomyProvider
                                 var navigationProvider = '';
@@ -185,60 +165,7 @@
                     sortArrrayRecursive(nodeItem1);
                 });
             };
-
-            /*
-            * Get taxonomy terms by CSOM
-            * @termStoreName: term store name
-            * @termGroupName: term group name
-            * @termSetName: termset name            
-            */
-            navigationService.prototype.getCountryByTerms = function (termStoreName, termGroupName, termSetName) {
-                var q = $q.defer();
-                var scriptbase = _spPageContextInfo.webServerRelativeUrl + "/_layouts/15/";
-                $.getScript(scriptbase + "SP.js", function () {
-                    $.getScript(scriptbase + "SP.Taxonomy.js", function () {
-                        // Current Context
-                        var context = SP.ClientContext.get_current();
-                        // Current Taxonomy Session
-                        var taxSession = SP.Taxonomy.TaxonomySession.getTaxonomySession(context);
-                        // Term Stores
-                        var termStores = taxSession.get_termStores();
-                        // Name of the Term Store from which to get the Terms.
-                        termStore = termStores.getByName(termStoreName);
-                        // Term Group
-                        var termGroup = termStore.get_groups().getByName(termGroupName ? termGroupName : consts.taxonomy.rootTermGroupName);
-                        // Term Set
-                        var termSet = termGroup.get_termSets().getByName(termSetName);
-
-                        var terms = termSet.getAllTerms();
-                        var requests = 'Include(IsRoot, Id, Name)';
-                        context.load(terms, requests);
-
-                        var tempList = [];
-                        context.executeQueryAsync(function () {
-                            var termEnumerator = terms.get_data().length > 0 ? terms.getEnumerator() : terms.$5_0.$1t_0.getEnumerator();
-                            while (termEnumerator.moveNext()) {
-                                var currentTerm = termEnumerator.get_current();
-                                var id = currentTerm.get_id().ToSerialized();
-                                var isRoot = currentTerm.get_isRoot();
-                                var name = currentTerm.get_name();
-                                var text = currentTerm.get_name();
-
-                                var termInJson = {
-                                    id: id,
-                                    isRoot: isRoot,
-                                    name: name,
-                                    text: text,
-                                };
-                                tempList.push(termInJson);
-                            };
-                            q.resolve(tempList);
-                        });
-                    });
-                });
-                return q.promise;
-            };
-
+            
             /*
             * Get taxonomy terms by CSOM
             * @termStoreName: term store name
@@ -354,132 +281,7 @@
                 };
                 return menuItems;
             };
-
-
-
-            /* ------------ remove code later ------------ */
-            // Load list groups of current user --> will be remove later
-            navigationService.prototype.getCurrentLoginUser = function () {
-                var endpointUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/getuserbyid(" + _spPageContextInfo.userId + ")";
-                var q = $q.defer();
-                $http({
-                    url: endpointUrl,
-                    method: 'GET',
-                    headers: {
-                        "Content-Type": "application/json;odata=verbose",
-                        "Accept": "application/json;odata=verbose",
-                        "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                    }
-                }).success(function (result) {
-                    var userId = result.d.Id;
-                    q.resolve(userId);
-                }).error(function (result, status) {
-                    q.reject(status);
-                });
-                return q.promise;
-            };
-
-            // Load list groups of current user --> will be remove later
-            navigationService.prototype.getCurrentUserWithDetails = function () {
-                // check if Search Center -> get data from Ignite
-                var endpointUrl = '';
-                if (appContext.siteServerRelativeUrl.indexOf('/search') >= 0) {
-                    endpointUrl = appContext.rootSiteIgnite + appContext.currentUICultureName + "/_api/web/currentuser/?$expand=groups";
-                } else {
-                    endpointUrl = appContext.siteCollectionUrl + "/_api/web/currentuser/?$expand=groups";
-                }
-                // call Rest Api
-                var q = $q.defer();
-                $http({
-                    url: endpointUrl,
-                    method: 'GET',
-                    headers: {
-                        "Content-Type": "application/json;odata=verbose",
-                        "Accept": "application/json;odata=verbose",
-                        "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                    }
-                }).success(function (result) {
-                    var isGeneral = false;
-                    var data = result.d.Groups.results;
-                    angular.forEach(data, function (item) {
-                        if (item.Title == 'CEP General') {
-                            isGeneral = true;
-                        }
-                    });
-
-                    if (!isGeneral || data.length == 0) {
-                        var group = {
-                            Title: 'CEP General'
-                        };
-                        data.push(group);
-                    };
-                    q.resolve(data);
-                }).error(function (result, status) {
-                    q.reject(status);
-                });
-                return q.promise;
-            };
-
-            // Load getCurrentUser --> will be remove later
-            navigationService.prototype.getCurrentUser = function () {
-                var q = $q.defer();
-                $http({
-                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/CurrentUser",
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json;odata=verbose",
-                        "Accept": "application/json;odata=verbose",
-                        "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                    }
-                }).success(function (result) {
-                    q.resolve(result.d);
-                }).error(function (result, status) {
-                    q.reject(status);
-                });
-                return q.promise;
-            };
-
-            // Load getCurrentUserGroupColl --> will be remove later
-            navigationService.prototype.getUserGroupCollection = function (userId) {
-                // check if Search Center -> get data from Ignite
-                var endpointUrl = '';
-                if (appContext.siteServerRelativeUrl.indexOf('/search') >= 0) {
-                    endpointUrl = appContext.rootSiteIgnite + appContext.currentUICultureName + "/_api/web/GetUserById(" + userId + ")/Groups";
-                } else {
-                    endpointUrl = appContext.siteCollectionUrl + "/_api/web/GetUserById(" + userId + ")/Groups";
-                };
-
-                var q = $q.defer();
-                $http({
-                    url: endpointUrl,
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json;odata=verbose",
-                        "Accept": "application/json;odata=verbose",
-                        "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                    }
-                }).success(function (result) {
-                    var isGeneral = false;
-                    var data = result.d.results;
-                    angular.forEach(data, function (item) {
-                        if (item.Title == 'CEP General') {
-                            isGeneral = true;
-                        }
-                    });
-
-                    if (!isGeneral || data.length == 0) {
-                        var group = {
-                            Title: 'CEP General'
-                        };
-                        data.push(group);
-                    };
-                    q.resolve(data);
-                }).error(function (result, status) {
-                    q.reject(status);
-                });
-                return q.promise;
-            };
-
+			
             return new navigationService;
         }]);
 })();

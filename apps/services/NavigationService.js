@@ -1,7 +1,7 @@
 ﻿(function () {
     angular.module('vetc.services.navigationService', [])
 	.factory('navigationService', ['$http', '$q', '$filter', 'appCommon',
-        function ($http, $q, $filter, appCommon, appSetting) {
+        function ($http, $q, $filter, appCommon) {
             // constructor
             var navigationService = function () {
             };            
@@ -213,17 +213,9 @@
             * @termSetName: termset name
             * @navigationTaxonomyProvider: GlobalNavigationSwitchableProvider or CurrentNavigationTaxonomyProvider
             */
-            navigationService.prototype.getNavigationByRestApi = function (termStoreName, termGroupName, termSetName, navigationTaxonomyProvider) {
-
-                // check if Search Center -> get data from Ignite
-                var url = '';
-                if (appContext.isRootSiteIgnite) {
-                    url = appContext.webAbsoluteUrl + String.format("/_api/navigation/menustate?mapprovidername='{0}'", navigationTaxonomyProvider);
-                } else {
-                    url = appContext.rootSiteIgnite + appContext.currentUICultureName + String.format("/_api/navigation/menustate?mapprovidername='{0}'", navigationTaxonomyProvider);
-                };
-
-                // call Rest Api
+            navigationService.prototype.getNavigationByRestApi = function () {
+				var provider = 'GlobalNavigationSwitchableProvider';
+                var url = appCommon.spPageContextInfo.webAbsoluteUrl + String.format("/_api/navigation/menustate?mapprovidername='{0}'", provider);                                
                 var q = $q.defer();
                 $http({
                     url: url,
@@ -231,12 +223,7 @@
                     contentType: "application/json;odata=verbose",
                     headers: { "accept": "application/json;odata=verbose" },
                 }).success(function (result) {
-                    var menuItems = [];
-                    var termLevel = 0;
-                    angular.forEach(result.d.MenuState.Nodes.results, function (item) {
-                        menuItems = getChildrenNavigation(result.d.MenuState.Nodes.results, termLevel);
-                    });
-                    q.resolve(menuItems);
+                    q.resolve(result.d.MenuState.Nodes.results);
                 }).error(function (error, status) {
                     q.reject(status);
                 });

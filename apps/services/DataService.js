@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    angular.module('publicisApp.services.dataService', [])
+    angular.module('vetc.services.dataService', [])
         .factory('dataService', ['$http', '$q',
         function ($http, $q) {
             // constructor

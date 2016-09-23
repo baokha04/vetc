@@ -1,4 +1,12 @@
 ﻿(function () {
     'use strict';
-    var app = angular.module('vetc', ['vetc.common', 'vetc.components', 'vetc.directives', 'vetc.services']);
+    var app = angular.module('vetc', [
+		'vetc.common',
+		
+		'vetc.services.baseService',
+		'vetc.services.dataService',
+		'vetc.services.navigationService',
+		
+		'vetc.controllers.menuController'
+	]);	
 })();

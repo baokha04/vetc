@@ -11,13 +11,24 @@
 	</PublishingWebControls:EditModePanel>
 	<SharePointWebControls:FieldValue id="PageStylesField" FieldName="HeaderStyleDefinitions" runat="server"/>
 	
-	<!-- Custom CSS -->
-	<link rel="stylesheet" href='<%$SPUrl:~sitecollection/SiteAssets/Styles/styles.css%>' runat="server" />
+	<!-- CSS Registration -->
 	
-	<!-- Custom JS -->
+	<!-- CSS Custom -->
+	<link rel="stylesheet" href='<%$SPUrl:~sitecollection/Style%20Library/vetc/assets/css/vetc.css%>' runat="server" />
+	                                                     
+	<!-- JS Registration -->
 	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/libs/jquery/jquery.js %>" />'></script>	
 	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/libs/moment/moment.min.js %>" />'></script>
 	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/libs/angular/angular.min.js %>" />'></script>
+	
+	<!-- Angular Application -->
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/app.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/common/appCommon.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/baseService.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/dataService.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/navigationService.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/controllers/menuController.js %>" />'></script>
+	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/controllers/homeController.js %>" />'></script>
 </asp:Content>
 
 <asp:Content ContentPlaceholderID="PlaceHolderMain" runat="server">	
@@ -26,15 +37,5 @@
 			<span>{{ model }}</span>
 			<div ng-include="'/Style%20Library/vetc/apps/views/menu.html'"></div>
 		</div>
-	<div>
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/app.js %>" />'></script>
-	
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/common/appCommon.js %>" />'></script>	
-	
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/baseService.js %>" />'></script>
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/dataService.js %>" />'></script>
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/services/navigationService.js %>" />'></script>
-	
-	<script type="text/javascript" src='<asp:Literal runat="server" Text="<%$SPUrl:~sitecollection/Style%20Library/vetc/apps/controllers/menuController.js %>" />'></script>
-	
+	<div>	
 </asp:Content>

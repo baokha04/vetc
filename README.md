@@ -1,2 +1,2 @@
 # vetc
-sample: SharePoint Online + Angular
+sample: Angular + SharePoint Online

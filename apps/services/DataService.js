@@ -1,20 +1,11 @@
 ﻿(function () {
     'use strict';
-    angular.module('publicisApp.services.dataService', [])
-        .factory('dataService', ['$http', '$q', 'appContext', 'appSetting',
-        function ($http, $q, appContext, appSetting) {
-            // constructor		
+    angular.module('vetc.services.dataService', [])
+        .factory('dataService', ['$http', '$q',
+        function ($http, $q) {
+            // constructor
             var dataService = function () {
-            }
-            
-            var getSiteCollection = function () {
-                var url = '';
-                if (appContext.siteServerRelativeUrl.indexOf('/search') >= 0)
-                    url = appContext.rootSiteIgnite + appContext.currentUICultureName;
-                else
-                    url = appContext.siteCollectionUrl;
-                return url;
-            };
+            }            
 
             // base service: GET & POST & PUT
             dataService.prototype.getData = function (url) {
